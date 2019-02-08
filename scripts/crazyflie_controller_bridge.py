@@ -8,6 +8,7 @@ import rospy
 from geometry_msgs.msg import PoseStamped, Twist
 from std_srvs.srv import Empty
 from crazyflie_driver.srv import UpdateParams
+from std_msgs.msg import Int8
 import time
 
 # Takeoff and landing speed in ms^-1
@@ -24,6 +25,7 @@ class ControllerBridge:
         self.taking_off = False
         self.landing = False
         self.transient_height = 0
+        self.state = 0
 
         self.assisted_takeoff = rospy.get_param("~assisted_takeoff", True)
         self.assisted_landing = rospy.get_param("~assisted_landing", True)
@@ -32,6 +34,7 @@ class ControllerBridge:
 
         self.goal_sub = rospy.Subscriber("goal", PoseStamped, self.new_goal)
         self.cmd_vel_pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
+        self.state_pub = rospy.Publisher("state", Int8, queue_size=1)
 
         # Services
         self.ts = rospy.Service('takeoff', Empty, self.takeoff)
@@ -49,6 +52,8 @@ class ControllerBridge:
 
     def send_setpoint(self, event):
         if self.flying:
+            self.state = 1
+            self.state_pub.publish(self.state)
             if self.taking_off:
                 sp = Twist()
                 sp.linear.x = self.target_setpoint.linear.x
@@ -56,6 +61,8 @@ class ControllerBridge:
                 sp.linear.z = self.transient_height*1000.0
                 self.cmd_vel_pub.publish(sp)
                 self.transient_height += TAKEOFF_SPEED/UPDATE_RATE
+                self.state = 2
+                self.state_pub.publish(self.state)
                 if sp.linear.z >= self.target_setpoint.linear.z:
                     self.transient_height = 0
                     self.taking_off = False
@@ -66,6 +73,8 @@ class ControllerBridge:
                 sp.linear.z = self.transient_height*1000.0
                 self.cmd_vel_pub.publish(sp)
                 self.transient_height -= LANDING_SPEED/UPDATE_RATE
+                self.state = 3
+                self.state_pub.publish(self.state)
                 if self.transient_height <= 0:
                     self.transient_height = 0
                     self.landing = False
@@ -74,6 +83,8 @@ class ControllerBridge:
                 self.cmd_vel_pub.publish(self.target_setpoint)
         else:
             self.cmd_vel_pub.publish(self.landed_setpoint)
+            self.state = 0
+            self.state_pub.publish(self.state)
 
     def new_goal(self, goal):
         self.target_setpoint.linear.x = goal.pose.position.x
