@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="uri0" default="radio://0/80/250K/E7E7E7E7E7" />
+  <arg name="uri1" default="radio://0/80/250K/E7E7E7E7E8"/>
+  <arg name="frame" default="base_link" />
+  <arg name="joy_dev" default="/dev/input/js0" />
+  <arg name="ns_prefix" default="crazyflie"/>
+
+  <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+  <param name="robot_description" command="$(find xacro)/xacro.py $(find crazyflie_description)/urdf/crazyflie2.urdf.xacro" />
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_swarm_with_goal.rviz"/>
+
+
+  <group ns="$(arg ns_prefix)1">
+    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+    <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+      <param name="uri" value="$(arg uri0)" />
+      <param name="tf_prefix" value="$(arg ns_prefix)1" />
+      <rosparam>
+        genericLogTopics: ["log_kfpos", "log_kfqt"]
+        genericLogTopicFrequencies: [30, 30]
+        genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
+      </rosparam>
+    </node>
+
+    <node name="joy" pkg="joy" type="joy_node" output="screen">
+      <param name="dev" value="$(arg joy_dev)" />
+    </node>
+
+    <node name="joystick_controller" pkg="crazyflie_demo" type="controller.py" output="screen">
+      <param name="use_crazyflie_controller" value="True" />
+    </node>
+
+    <node name="controller_bridge" pkg="bitcraze_lps_estimator" type="crazyflie_controller_bridge.py" output="screen"/>
+
+    <node name="lps_efk_bridge" pkg="bitcraze_lps_estimator" type="lps_ekf_bridge.py" output="screen">
+      <param name="tf_prefix" value="$(arg ns_prefix)1" />
+    </node>
+
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+
+  </group>
+
+  <group ns="$(arg ns_prefix)2">
+    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+    <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+      <param name="uri" value="$(arg uri1)" />
+      <param name="tf_prefix" value="$(arg ns_prefix)2" />
+      <rosparam>
+        genericLogTopics: ["log_kfpos", "log_kfqt"]
+        genericLogTopicFrequencies: [30, 30]
+        genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
+      </rosparam>
+    </node>
+
+    <node name="joy" pkg="joy" type="joy_node" output="screen">
+      <param name="dev" value="$(arg joy_dev)" />
+    </node>
+
+    <node name="joystick_controller" pkg="crazyflie_demo" type="controller.py" output="screen">
+      <param name="use_crazyflie_controller" value="True" />
+    </node>
+
+    <node name="controller_bridge" pkg="bitcraze_lps_estimator" type="crazyflie_controller_bridge.py" output="screen"/>
+
+    <node name="lps_efk_bridge" pkg="bitcraze_lps_estimator" type="lps_ekf_bridge.py" output="screen">
+      <param name="tf_prefix" value="$(arg ns_prefix)2" />
+    </node>
+
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+
+  </group>
+
+  <!-- Launch UAL server for uav id=1 -->
+  <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_1" output="screen">
+    <param name="uav_id" value="1"/>
+    <!-- <param name="pose_frame_id" value="world"/> -->
+    <param name="ual_server" value="on"/>
+    <param name="ual_pub_rate" value="30.0"/>
+    <!-- <param name="uav_frame" value="crazyflie/base_link"/> -->
+    <!-- <param name="home_pose_parent_frame" value="world"/> -->
+    <rosparam param="home_pose">[2.5, 2.5, 0]</rosparam>
+    <param name="backend" value="crazyflie"/>
+  </node>
+
+  <!-- Launch UAL server for uav id=1 -->
+  <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_2" output="screen">
+    <param name="uav_id" value="2"/>
+    <!-- <param name="pose_frame_id" value="world"/> -->
+    <param name="ual_server" value="on"/>
+    <param name="ual_pub_rate" value="30.0"/>
+    <!-- <param name="uav_frame" value="crazyflie/base_link"/> -->
+    <!-- <param name="home_pose_parent_frame" value="world"/> -->
+    <rosparam param="home_pose">[2, 2, 0]</rosparam>
+    <param name="backend" value="crazyflie"/>
+  </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 world lps 100" />
+
+  <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch" />
+</launch>
