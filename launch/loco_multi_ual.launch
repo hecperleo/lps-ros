@@ -9,7 +9,7 @@
   <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
   <param name="robot_description" command="$(find xacro)/xacro.py $(find crazyflie_description)/urdf/crazyflie2.urdf.xacro" />
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_swarm_with_goal.rviz"/>
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find bitcraze_lps_estimator)/data/rvizconfig_ual_swarm.rviz"/>
 
 
   <group ns="$(arg ns_prefix)1">
@@ -101,6 +101,7 @@
   </node>
 
   <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 world lps 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 1 lps map 100" />
 
   <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch" />
 </launch>
