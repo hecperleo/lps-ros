@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="uri" default="radio://0/80/250K" />
+  <arg name="uri" default="radio://0/70/250K" />
   <arg name="frame" default="base_link" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="x" default="2.0" />

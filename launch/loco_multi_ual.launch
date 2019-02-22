@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="uri0" default="radio://0/80/250K/E7E7E7E7E7" />
-  <arg name="uri1" default="radio://0/80/250K/E7E7E7E7E8"/>
-  <arg name="frame" default="base_link" />
+  <arg name="uri1" default="radio://0/80/250K"/>
+  <arg name="uri2" default="radio://0/70/250K"/>
+  <arg name="frame" default="/base_link" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="ns_prefix" default="crazyflie"/>
 
@@ -16,7 +16,7 @@
     <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
-      <param name="uri" value="$(arg uri0)" />
+      <param name="uri" value="$(arg uri1)" />
       <param name="tf_prefix" value="$(arg ns_prefix)1" />
       <rosparam>
         genericLogTopics: ["log_kfpos", "log_kfqt"]
@@ -48,7 +48,7 @@
     <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
-      <param name="uri" value="$(arg uri1)" />
+      <param name="uri" value="$(arg uri2)" />
       <param name="tf_prefix" value="$(arg ns_prefix)2" />
       <rosparam>
         genericLogTopics: ["log_kfpos", "log_kfqt"]
@@ -79,29 +79,31 @@
   <!-- Launch UAL server for uav id=1 -->
   <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_1" output="screen">
     <param name="uav_id" value="1"/>
-    <!-- <param name="pose_frame_id" value="world"/> -->
+    <!-- <param name="pose_frame_id" value=""/> -->
     <param name="ual_server" value="on"/>
     <param name="ual_pub_rate" value="30.0"/>
-    <!-- <param name="uav_frame" value="crazyflie/base_link"/> -->
-    <!-- <param name="home_pose_parent_frame" value="world"/> -->
-    <rosparam param="home_pose">[2.5, 2.5, 0]</rosparam>
+    <!-- <param name="uav_frame" value="/base_link"/> -->
+    <!-- <param name="home_pose_parent_frame" value="/map"/> -->
+    <rosparam param="home_pose">[2, 1.5, 0]</rosparam>
     <param name="backend" value="crazyflie"/>
   </node>
 
   <!-- Launch UAL server for uav id=1 -->
   <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_2" output="screen">
     <param name="uav_id" value="2"/>
-    <!-- <param name="pose_frame_id" value="world"/> -->
+    <!-- <param name="pose_frame_id" value=""/> -->
     <param name="ual_server" value="on"/>
     <param name="ual_pub_rate" value="30.0"/>
-    <!-- <param name="uav_frame" value="crazyflie/base_link"/> -->
-    <!-- <param name="home_pose_parent_frame" value="world"/> -->
-    <rosparam param="home_pose">[2, 2, 0]</rosparam>
+    <!-- <param name="uav_frame" value="crazyflie2/base_link"/> -->
+    <!-- <param name="home_pose_parent_frame" value="/map"/> -->
+    <rosparam param="home_pose">[1, 1, 0]</rosparam>
     <param name="backend" value="crazyflie"/>
   </node>
 
-  <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="1 0 0 0 0 0 1 world lps 100" />
-  <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 1 lps map 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link0_broadcaster" args="1 0 0 0 0 0 1 /world /lps 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link00_broadcaster" args="0 0 0 0 0 0 1 /world /map 100" />
+  <!-- <node pkg="tf" type="static_transform_publisher" name="link1_broadcaster" args="0 0 0 0 0 0 1 map uav_1_home 100" />
+  <node pkg="tf" type="static_transform_publisher" name="link2_broadcaster" args="0 0 0 0 0 0 1 map uav_2_home 100" /> -->
 
   <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch" />
 </launch>
