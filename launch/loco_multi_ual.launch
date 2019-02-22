@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <arg name="uri1" default="radio://0/80/250K"/>
-  <arg name="uri2" default="radio://0/70/250K"/>
+  <arg name="uri2" default="radio://0/60/250K"/>
   <arg name="frame" default="/base_link" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="ns_prefix" default="crazyflie"/>
@@ -81,7 +81,7 @@
     <param name="uav_id" value="1"/>
     <!-- <param name="pose_frame_id" value=""/> -->
     <param name="ual_server" value="on"/>
-    <param name="ual_pub_rate" value="30.0"/>
+    <param name="ual_pub_rate" value="100.0"/>
     <!-- <param name="uav_frame" value="/base_link"/> -->
     <!-- <param name="home_pose_parent_frame" value="/map"/> -->
     <rosparam param="home_pose">[2, 1.5, 0]</rosparam>
@@ -93,7 +93,7 @@
     <param name="uav_id" value="2"/>
     <!-- <param name="pose_frame_id" value=""/> -->
     <param name="ual_server" value="on"/>
-    <param name="ual_pub_rate" value="30.0"/>
+    <param name="ual_pub_rate" value="100.0"/>
     <!-- <param name="uav_frame" value="crazyflie2/base_link"/> -->
     <!-- <param name="home_pose_parent_frame" value="/map"/> -->
     <rosparam param="home_pose">[1, 1, 0]</rosparam>
