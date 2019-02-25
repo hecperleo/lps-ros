@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="uri0" default="radio://0/80/250K" />
-  <arg name="uri1" default="radio://0/70/250K"/>
-  <arg name="uri2" default="radio://0/60/250K"/>
+  <arg name="uri0" default="radio://0/90/250K" />
+  <arg name="uri1" default="radio://0/80/250K"/>
+  <!-- <arg name="uri2" default="radio://0/60/250K"/> -->
   <!-- <arg name="uri3" default="radio://0/107/2M/E7E7E7E7BD"/>
   <arg name="uri4" default="radio://0/107/2M/E7E7E7E7BE"/> -->
   <arg name="frame" default="base_link" />
@@ -11,13 +11,13 @@
   <arg name="y0" default="1.5" />
   <arg name="z0" default="1.0" />
 
-  <arg name="x1" default="1.5" />
-  <arg name="y1" default="2.0" />
+  <arg name="x1" default="1.0" />
+  <arg name="y1" default="1.5" />
   <arg name="z1" default="1.0" />
 
-  <arg name="x2" default="1.0" />
+  <!-- <arg name="x2" default="1.0" />
   <arg name="y2" default="1.5" />
-  <arg name="z2" default="1.0" />
+  <arg name="z2" default="1.0" /> -->
 
   <!-- <arg name="x3" default="3.1" />
   <arg name="y3" default="1.5" />
@@ -114,7 +114,7 @@
   </group>
 
 
-  <group ns="crazyflie2">
+  <!-- <group ns="crazyflie2">
     <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
 
     <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
@@ -152,7 +152,7 @@
 
     <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
 
-  </group>
+  </group> -->
 
   <!-- <group ns="crazyflie3">
     <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />

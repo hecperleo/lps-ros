@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="uri1" default="radio://0/80/250K"/>
-  <arg name="uri2" default="radio://0/60/250K"/>
+  <arg name="uri1" default="radio://0/90/250K"/>
+  <arg name="uri2" default="radio://0/80/250K"/>
+  <!-- <arg name="uri3" default="radio://0/60/250K"/> -->
   <arg name="frame" default="/base_link" />
   <arg name="joy_dev" default="/dev/input/js0" />
   <arg name="ns_prefix" default="crazyflie"/>
@@ -76,6 +77,38 @@
 
   </group>
 
+  <!-- <group ns="$(arg ns_prefix)3">
+    <rosparam command="load" file="$(find bitcraze_lps_estimator)/data/anchor_pos.yaml" />
+
+    <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+      <param name="uri" value="$(arg uri3)" />
+      <param name="tf_prefix" value="$(arg ns_prefix)3" />
+      <rosparam>
+        genericLogTopics: ["log_kfpos", "log_kfqt"]
+        genericLogTopicFrequencies: [30, 30]
+        genericLogTopic_log_kfpos_Variables: ["kalman.stateX", "kalman.stateY", "kalman.stateZ"]
+        genericLogTopic_log_kfqt_Variables: ["kalman.q0", "kalman.q1", "kalman.q2", "kalman.q3"]
+      </rosparam>
+    </node>
+
+    <node name="joy" pkg="joy" type="joy_node" output="screen">
+      <param name="dev" value="$(arg joy_dev)" />
+    </node>
+
+    <node name="joystick_controller" pkg="crazyflie_demo" type="controller.py" output="screen">
+      <param name="use_crazyflie_controller" value="True" />
+    </node>
+
+    <node name="controller_bridge" pkg="bitcraze_lps_estimator" type="crazyflie_controller_bridge.py" output="screen"/>
+
+    <node name="lps_efk_bridge" pkg="bitcraze_lps_estimator" type="lps_ekf_bridge.py" output="screen">
+      <param name="tf_prefix" value="$(arg ns_prefix)3" />
+    </node>
+
+    <node name="lps_viz" pkg="bitcraze_lps_estimator" type="lps_viz.py" />
+
+  </group> -->
+
   <!-- Launch UAL server for uav id=1 -->
   <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_1" output="screen">
     <param name="uav_id" value="1"/>
@@ -99,6 +132,15 @@
     <rosparam param="home_pose">[1, 1, 0]</rosparam>
     <param name="backend" value="crazyflie"/>
   </node>
+
+  <!-- Launch UAL server for uav id=1 -->
+  <!-- <node pkg="uav_abstraction_layer" type="server" name="ual" ns="uav_3" output="screen">
+    <param name="uav_id" value="3"/>
+    <param name="ual_server" value="on"/>
+    <param name="ual_pub_rate" value="100.0"/>
+    <rosparam param="home_pose">[1.5, 2, 0]</rosparam>
+    <param name="backend" value="crazyflie"/>
+  </node> -->
 
   <node pkg="tf" type="static_transform_publisher" name="link0_broadcaster" args="1 0 0 0 0 0 1 /world /lps 100" />
   <node pkg="tf" type="static_transform_publisher" name="link00_broadcaster" args="0 0 0 0 0 0 1 /world /map 100" />
